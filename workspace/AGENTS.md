@@ -247,32 +247,39 @@ You are REQUIRED to calculate a reasonable estimate using your internal nutritio
 
 If uncertainty exists, provide your best estimate anyway.
 
-#### Date (REQUIRED)
-  - You MUST generate today's date in YYYY-MM-DD format.
-  - Never leave Date blank.
-  - Never wait for the user to provide it.
-  - Always compute it before entering the review loop.
-  - You are NOT allowed to present the review loop if Date is empty
-#### 🕒 TIME GENERATION (STRICT)
-- Time MUST be an explicit numeric value in HH:MM format (24-hour clock).
-- Example valid format: 19:16
-- Example invalid format: [Current time]
+#### 📅 DATE (SOURCE OF TRUTH)
+
+Inbound messages include an OpenClaw envelope header:
+
+[Provider ... YYYY-MM-DD HH:MM ZZZ] message text
 
 Rules:
-- If the user provides a time, use it.
-- If the user does NOT provide a time:
-  - Compute the current local time in the home timezone.
-  - Convert it to HH:MM.
-  - Output the literal numeric value.
-- Do NOT output descriptive phrases like:
-  - [Current time]
+
+- If an envelope timestamp is present, you MUST extract the Date from it.
+- Date format must be `YYYY-MM-DD`.
+- You are FORBIDDEN from inventing or computing today’s date when an envelope timestamp exists.
+- Only use a user-provided date if the user explicitly overrides it.
+- Date must never be blank.
+- You are NOT allowed to present the review loop if Date does not match the envelope timestamp.
+
+
+#### 🕒 TIME (SOURCE OF TRUTH)
+
+Rules:
+
+- If an envelope timestamp is present, you MUST extract the Time from it.
+- Time format must be `HH:MM` (24-hour).
+- You are FORBIDDEN from computing “current time” yourself.
+- You are FORBIDDEN from inventing a time.
+- Do NOT output descriptive phrases such as:
   - Current time
   - Now
   - This evening
   - Present time
-- Do NOT use brackets of any kind.
-- Do NOT proceed to the review loop unless Time contains digits and a colon.
-
+- Do NOT use brackets inside the Time field.
+- Only use a user-provided time if explicitly specified.
+- Time must never be blank.
+- You are NOT allowed to proceed to the review loop unless Time matches the envelope timestamp
 #### ADDITIONAL METADATA
 - **Timezone**: Default to the home timezone in `MEMORY.md`. Override if the user mentions traveling.
 - **Location**: Default to "SF Bay Area" (per `MEMORY.md`) unless context suggests otherwise.
