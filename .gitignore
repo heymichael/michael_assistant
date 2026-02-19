@@ -1,0 +1,21 @@
+# --- secrets / credentials ---
+.env
+credentials/
+identity/
+devices/
+telegram/
+
+# --- generated / runtime state ---
+logs/
+media/
+memory/
+canvas/
+completions/
+cron/
+exec-approvals.json
+update-check.json
+
+# --- backups / local artifacts ---
+openclaw.json.bak*
+openclaw.json
+agents/

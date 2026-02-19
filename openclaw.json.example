@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.15",
+    "lastTouchedAt": "2026-02-18T23:52:20.960Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-18T23:52:20.943Z",
+    "lastRunVersion": "2026.2.15",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai/gpt-4o-mini"
+      },
+      "models": {
+        "openai/gpt-4o-mini": {}
+      },
+      "workspace": "/Users/arcademini/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "tools": {
+    "media": {
+      "audio": {
+        "enabled": true,
+        "models": [
+          {
+            "provider": "openai",
+            "model": "whisper-1"
+          }
+        ]
+      }
+    },
+    "exec": {}
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "botToken": "<TELEGRAM_BOT_TOKEN_HERE>",
+      "allowFrom": [
+        <TELEGRAM USER ID HERE>
+      ],
+      "groupPolicy": "allowlist",
+      "dms": {},
+      "streamMode": "partial",
+      "actions": {
+        "reactions": true,
+        "sendMessage": true,
+        "sticker": true
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "b2c7753de9559376bd60115b07355d2a3e2415493fb2f875"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "calendar.add",
+        "contacts.add",
+        "reminders.add"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  }
+}
