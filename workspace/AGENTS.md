@@ -1,4 +1,4 @@
-# AGENTS.md - Your Workspace
+√# AGENTS.md - Your Workspace
 
 This folder is home. Treat it that way.
 
@@ -219,15 +219,80 @@ This is a starting point. Add your own conventions, style, and rules as you figu
 - Trigger only in private chat with @TheDukeLeto.
 
 ### 2. ESTIMATE & CONTEXT
-- **MANDATORY ESTIMATION**: Even if the user does not provide numbers, YOU must calculate the estimates for calories, fat, carbs, sugar, fiber, and protein based on your internal nutritional database. 
-- **NO QUESTIONS**: Do not ask the user for nutritional info; provide your best estimate first, then let them edit it in the review loop.
-- **Nutrients**: Estimate calories, fat, carbs, protein, sugar, and dietary fiber (raw numbers only. Do not append any letters like g or kcal or mg).
-- **Time/Date**: Use current Date and Time. 
+#### 🔒 MANDATORY NUTRITION GENERATION (NO PLACEHOLDERS EVER)
+
+You MUST generate numeric values for the following fields on every entry:
+
+- Calories
+- Fat
+- Carbs
+- Sugar
+- Fiber
+- Protein
+
+##### Hard Requirements
+
+- All nutrient fields must contain raw numeric values only.
+- Do NOT append units (no g, kcal, mg, etc.).
+- Do NOT leave any nutrient field blank.
+- Do NOT use placeholder text.
+- Do NOT use bracketed text of any kind.
+- Do NOT write `[Estimate]`.
+- Do NOT write `N/A`.
+- Do NOT write `Unknown`.
+- Do NOT ask the user whether you should estimate.
+- Do NOT ask the user to provide nutritional information before estimating.
+
+You are REQUIRED to calculate a reasonable estimate using your internal nutritional knowledge every time, even if the user provides no numbers.
+
+If uncertainty exists, provide your best estimate anyway.
+
+#### Date (REQUIRED)
+  - You MUST generate today's date in YYYY-MM-DD format.
+  - Never leave Date blank.
+  - Never wait for the user to provide it.
+  - Always compute it before entering the review loop.
+  - You are NOT allowed to present the review loop if Date is empty
+#### 🕒 TIME GENERATION (STRICT)
+- Time MUST be an explicit numeric value in HH:MM format (24-hour clock).
+- Example valid format: 19:16
+- Example invalid format: [Current time]
+
+Rules:
+- If the user provides a time, use it.
+- If the user does NOT provide a time:
+  - Compute the current local time in the home timezone.
+  - Convert it to HH:MM.
+  - Output the literal numeric value.
+- Do NOT output descriptive phrases like:
+  - [Current time]
+  - Current time
+  - Now
+  - This evening
+  - Present time
+- Do NOT use brackets of any kind.
+- Do NOT proceed to the review loop unless Time contains digits and a colon.
+
+#### ADDITIONAL METADATA
 - **Timezone**: Default to the home timezone in `MEMORY.md`. Override if the user mentions traveling.
 - **Location**: Default to "SF Bay Area" (per `MEMORY.md`) unless context suggests otherwise.
 - **Meal**: Guess (Breakfast/Lunch/Dinner/Snack) based on time and food type.
 - **Type**: Assume "home-cooked" unless "delivery" or "restaurant" is mentioned.
 - **Description**: Maximum 15 words.
+
+### PRE-REVIEW VALIDATION (MANDATORY)
+Before presenting the review loop:
+- Confirm Date is non-empty and formatted YYYY-MM-DD
+- Confirm Time is non-empty and formatted HH:MM
+- If missing, generate them immediately.
+- Never show a review entry with missing Date or Time.
+- Verify that Calories, Fat, Carbs, Sugar, Fiber, and Protein are all numeric values.
+- If any nutrient field contains text, brackets, placeholders, or is empty:
+  - Immediately replace it with a calculated number.
+  - Do NOT ask the user.
+- You are not allowed to present the review loop with non-numeric nutrition values.
+- The review loop must never contain bracketed text.
+
 
 ### 3. THE REVIEW LOOP
 -  Before saving, present the data to the user in this format:
