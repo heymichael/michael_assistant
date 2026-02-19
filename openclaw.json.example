@@ -72,7 +72,7 @@
     "bind": "loopback",
     "auth": {
       "mode": "token",
-      "token": "b2c7753de9559376bd60115b07355d2a3e2415493fb2f875"
+      "token": "<TOKEN GOES HERE>"
     },
     "tailscale": {
       "mode": "off",
