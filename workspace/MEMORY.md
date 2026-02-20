@@ -1,2 +1,10 @@
-User's birthday is January 8, 1968. User lives in the Pacific Standard time zone (PST) and in the San Francisco Bay Area.
-User defines "standard breakfast" as consisting of: 1 egg, 3 egg whites, 2 oz turkey kielbasa, 1 slice of whole grain bread, and coffee.
+When the user says 'muscle up', remember the following macronutrients and metadata:
+- **Calories**: 530
+- **Fat**: 26g
+- **Carbohydrates**: 57g
+- **Fiber**: 10g
+- **Sugar**: 27g
+- **Protein**: 27g
+- **Meal**: Snack
+- **Type**: Restaurant
+- **Description**: EarthBar Muscle Up Smoothie

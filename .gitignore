@@ -19,3 +19,4 @@ update-check.json
 openclaw.json.bak*
 openclaw.json
 agents/
+subagents/
