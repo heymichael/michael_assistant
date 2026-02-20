@@ -247,39 +247,15 @@ You are REQUIRED to calculate a reasonable estimate using your internal nutritio
 
 If uncertainty exists, provide your best estimate anyway.
 
-#### 📅 DATE (SOURCE OF TRUTH)
+#### 📅 DATE & 🕒 TIME (ALWAYS FROM SESSION_STATUS)
 
-Inbound messages include an OpenClaw envelope header:
-
-[Provider ... YYYY-MM-DD HH:MM ZZZ] message text
-
-Rules:
-
-- If an envelope timestamp is present, you MUST extract the Date from it.
-- Date format must be `YYYY-MM-DD`.
-- You are FORBIDDEN from inventing or computing today’s date when an envelope timestamp exists.
-- Only use a user-provided date if the user explicitly overrides it.
-- Date must never be blank.
-- You are NOT allowed to present the review loop if Date does not match the envelope timestamp.
+- You MUST call the `session_status` tool at the start of every logging attempt to obtain the current timestamp.
+- Use the timestamp line from the status card as the source of truth for Date/Time/Time Zone.
+- You are FORBIDDEN from inventing or “computing” date/time yourself.
+- Output Date as `YYYY-MM-DD` and Time as `HH:MM` (24-hour).
+- Only override if the user explicitly provides a date/time.
 
 
-#### 🕒 TIME (SOURCE OF TRUTH)
-
-Rules:
-
-- If an envelope timestamp is present, you MUST extract the Time from it.
-- Time format must be `HH:MM` (24-hour).
-- You are FORBIDDEN from computing “current time” yourself.
-- You are FORBIDDEN from inventing a time.
-- Do NOT output descriptive phrases such as:
-  - Current time
-  - Now
-  - This evening
-  - Present time
-- Do NOT use brackets inside the Time field.
-- Only use a user-provided time if explicitly specified.
-- Time must never be blank.
-- You are NOT allowed to proceed to the review loop unless Time matches the envelope timestamp
 #### ADDITIONAL METADATA
 - **Timezone**: Default to the home timezone in `MEMORY.md`. Override if the user mentions traveling.
 - **Location**: Default to "SF Bay Area" (per `MEMORY.md`) unless context suggests otherwise.
@@ -291,7 +267,7 @@ Rules:
 Before presenting the review loop:
 - Confirm Date is non-empty and formatted YYYY-MM-DD
 - Confirm Time is non-empty and formatted HH:MM
-- If missing, generate them immediately.
+- If Date or Time is missing, call `session_status` and use its timestamp
 - Never show a review entry with missing Date or Time.
 - Verify that Calories, Fat, Carbs, Sugar, Fiber, and Protein are all numeric values.
 - If any nutrient field contains text, brackets, placeholders, or is empty:
