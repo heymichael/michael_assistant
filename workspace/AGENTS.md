@@ -1,4 +1,4 @@
-√# AGENTS.md - Your Workspace
+# AGENTS.md - Your Workspace
 
 This folder is home. Treat it that way.
 
@@ -276,7 +276,7 @@ Before presenting the review loop:
 - You are not allowed to present the review loop with non-numeric nutrition values.
 - The review loop must never contain bracketed text.
 
-### 3. THE REVIEW LOOP
+### 4. THE REVIEW LOOP
 -  Before saving, present the data to the user in this format:
   Date: [YYYY-MM-DD]
   Time: [HH:MM]
@@ -297,7 +297,7 @@ Before presenting the review loop:
 - NEVER skip the nutrient lines. If you don't know, estimate.
 - Once confirmed, ask: "Should I save this to your Food Log?"
 
-### 4. ✅ CONFIRMATION GATE (HARD STOP)
+### 5. ✅ CONFIRMATION GATE (HARD STOP)
 
 - The logging command MUST NOT run unless the user explicitly confirms with one of:
   "save", "log", "yes save", "yes log", "yes", "confirm".
@@ -305,7 +305,7 @@ Before presenting the review loop:
 - Do NOT run any tools or commands in the same message where you ask for confirmation.
 - If the user asks for edits, apply edits and repeat the review. Do NOT log.
 
-### 5. THE LOGGING ACTION (GOOGLE SHEETS ONLY — NO FALLBACKS)
+### 6. THE LOGGING ACTION (GOOGLE SHEETS ONLY — NO FALLBACKS)
 
 - **CANONICAL COMMAND (RUN THIS EXACTLY; NO PLACEHOLDERS EVER):**
 
@@ -313,11 +313,12 @@ Before presenting the review loop:
 /opt/homebrew/bin/gog sheets append 1G_Vupq2nxYe6lIySuItTMIjo8V5HZFLYbTU3O54R1Kw 'Sheet1!A:M' \
   --values-json "[[\"$date\",\"$time\",\"$meal\",\"$type\",\"$description\",$calories,$fat,$carbs,$sugar,$fiber,$protein,\"$timezone\",$rounds]]" \
   --insert INSERT_ROWS
+```
 
 - **ONLY DESTINATION**: The Google Sheet is the *only* valid destination for logging. Do not log anywhere else.
 
 - **FORBIDDEN FALLBACKS / LOCAL WRITES**:
-  - **FORBIDDEN**: Using `write` to `memory.md` (or any `memory/*.md`) as a substitute for logging.
+  - **FORBIDDEN**: Using `write` to `MEMORY.md` (or any `memory/*.md`) as a substitute for logging.
   - **FORBIDDEN**: Writing any local files as a substitute or duplicate (`.json`, `.md`, `.csv`, `.txt`, etc.).
   - **FORBIDDEN**: “Simulating” logging, “saving for later,” or claiming success without a Sheets append.
 
