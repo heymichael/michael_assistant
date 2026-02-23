@@ -258,8 +258,7 @@ If uncertainty exists, provide your best estimate anyway.
 
 
 #### ADDITIONAL METADATA
-- **Timezone**: Default to the home timezone in `MEMORY.md`. Override if the user mentions traveling.
-- **Location**: Default to "SF Bay Area" (per `MEMORY.md`) unless context suggests otherwise.
+- **Timezone**: Use only the timezone from `session_status` (timestamp/status card). Do not use `MEMORY.md` for timezone.
 - **Meal**: Guess (Breakfast/Lunch/Dinner/Snack) based on time and food type.
 - **Type**: Infer from context. Use "Home-Cooked" for meals the user cooked/prepared, "Store-Bought" for prepared/packaged food from a store/grocery/deli, "Delivery" for delivery/takeout/ordered food, or "Restaurant" for dining out. Make your best guess based on available context. Do NOT ask the user to specify. Do NOT present options like "Home-Cooked or Store-Bought (please specify)". If uncertain, silently default to "Home-Cooked".
 - **Description**: Maximum 15 words.
@@ -301,7 +300,8 @@ Before presenting the review loop:
 ### 5. ✅ CONFIRMATION GATE (HARD STOP)
 
 - The logging command MUST NOT run unless the user explicitly confirms with one of:
-  "save", "log", "yes save", "yes log", "yes", "confirm".
+  "save", "log", "yes save", "yes log", "confirm", "yes".
+- Plain "yes" is valid only when it is an unambiguous direct answer to "Should I save this to your Food Log?". If ambiguous, ask for explicit confirmation ("save" or "confirm") and do not log yet.
 - After asking "Should I save this to your Food Log?", you MUST STOP.
 - Do NOT run any tools or commands in the same message where you ask for confirmation.
 - If the user asks for edits, apply edits and repeat the review. Do NOT log.
@@ -325,7 +325,7 @@ Before presenting the review loop:
 
 - **GOAL**: Append exactly one row to the Google Sheet via the `gog` CLI.
 
-- **MANDATORY EXECUTION PATH**: Execute the command in `skills/food_logger/SKILL.md` using **host execution** (macOS node `system.run` / Exec).
+- **MANDATORY EXECUTION PATH**: Execute the command in `skills/food-logger/SKILL.md` using **host execution** (macOS node `system.run` / Exec).
   - If host exec/system.run is not enabled/approved, STOP and tell the user:
     **"I can’t log to Sheets because host exec/system.run isn’t enabled/approved."**
 
@@ -334,15 +334,15 @@ Before presenting the review loop:
   - Do not run any other binaries or arbitrary shell pipelines.
 
 - **RUN EXACTLY / EXEC MUST MATCH SKILL**:
-  - **RUN EXACTLY**: When logging, copy the command from `skills/food_logger/SKILL.md` *verbatim*.
+  - **RUN EXACTLY**: When logging, copy the command from `skills/food-logger/SKILL.md` *verbatim*.
   - **EXEC MUST MATCH SKILL**: The exec command must be a verbatim copy of the canonical form:
     `gog sheets append <sheet_id> <range> --values-json ... --insert INSERT_ROWS`
   - If you cannot produce the exact SKILL.md command, STOP and tell the user:
     **"Logging command did not match SKILL.md; refusing to run."**
 
 - **NO CLI TRANSLATION**:
-  - **NO FLAG MAPPING**: Do not convert fields into CLI flags (no `--date`, `--meal`, etc.).
-  - **NEVER USE FLAGS**: Do not use `--date`, `--time`, etc.
+  - **NO FIELD-FLAG MAPPING**: Do not convert fields into per-field CLI flags (no `--date`, `--time`, `--meal`, etc.).
+  - **CANONICAL FLAGS ONLY**: Use only the flags in the canonical command (`--values-json` and `--insert`).
   - **NEVER USE POSITIONAL VALUES**: Do not pass row values as positional CLI args. Values must be passed only via `--values-json`.
   - **NO NEW SUBCOMMANDS**: Do not use `gog add` or `gog append`. Only `gog sheets append ...`.
 
