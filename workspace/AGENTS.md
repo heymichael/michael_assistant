@@ -308,13 +308,7 @@ Before presenting the review loop:
 
 ### 6. THE LOGGING ACTION (GOOGLE SHEETS ONLY — NO FALLBACKS)
 
-- **CANONICAL COMMAND (RUN THIS EXACTLY; NO PLACEHOLDERS EVER):**
-
-```bash
-/opt/homebrew/bin/gog sheets append 1G_Vupq2nxYe6lIySuItTMIjo8V5HZFLYbTU3O54R1Kw 'Sheet1!A:M' \
-  --values-json "[[\"$date\",\"$time\",\"$meal\",\"$type\",\"$description\",$calories,$fat,$carbs,$sugar,$fiber,$protein,\"$timezone\",$rounds]]" \
-  --insert INSERT_ROWS
-```
+- **CANONICAL COMMAND SOURCE OF TRUTH**: The canonical logging command lives only in `skills/food-logger/SKILL.md`.
 
 - **ONLY DESTINATION**: The Google Sheet is the *only* valid destination for logging. Do not log anywhere else.
 
