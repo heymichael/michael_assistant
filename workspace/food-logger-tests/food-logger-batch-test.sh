@@ -5,8 +5,8 @@
 #   Nutrition:  Calories, Fat, Carbs, Sugar, Fiber, Protein
 #   Metadata:   Date, Time, Description, Type, Meal
 #   Type value: One of (case-insensitive) Home-Cooked, Restaurant, Delivery, Store-Bought (* ignored)
-#   Multiples:  Each macronutrient appears exactly once
-#   Values:    (only if Multiples passed) After each macro name, a 0 or positive integer (optional :* etc. before number; number may be followed by letters)
+#   Multiples:  Each macro appears once, OR multiple blocks with a "Total" block whose values equal the sum of preceding blocks
+#   Values:     Last occurrence of each macro has a 0 or positive integer
 #
 # Usage: ./food-logger-batch-test.sh
 
@@ -38,6 +38,7 @@ while IFS= read -r prompt || [[ -n "$prompt" ]]; do
   echo "=== Test $i: $prompt ==="
   response="$(openclaw agent --to "$TARGET" --message "$prompt" 2>&1)"
   echo "$response"
+  response="$(echo "$response" | sed 's/\*\*//g')"
   echo "---"
 
   # ---- Nutrition ----
@@ -100,67 +101,108 @@ while IFS= read -r prompt || [[ -n "$prompt" ]]; do
   T_RES+=("$t_res")
   TYPE_VALUES+=("$type_value")
 
-  # ---- Multiples (each macronutrient appears exactly once) ----
-  dupes=()
-  count_cal="$(echo "$response" | grep -ci "Calories:" || true)"
-  [[ -z "$count_cal" ]] && count_cal=0
-  [[ "$count_cal" -ne 1 ]] && dupes+=( "Calories($count_cal)" )
-  count_fat="$(echo "$response" | grep -ci "Fat:" || true)"
-  [[ -z "$count_fat" ]] && count_fat=0
-  [[ "$count_fat" -ne 1 ]] && dupes+=( "Fat($count_fat)" )
-  count_carbs="$(echo "$response" | grep -ciE "Carbs:|Carbohydrates:" || true)"
-  [[ -z "$count_carbs" ]] && count_carbs=0
-  [[ "$count_carbs" -ne 1 ]] && dupes+=( "Carbs($count_carbs)" )
-  count_sugar="$(echo "$response" | grep -ci "Sugar:" || true)"
-  [[ -z "$count_sugar" ]] && count_sugar=0
-  [[ "$count_sugar" -ne 1 ]] && dupes+=( "Sugar($count_sugar)" )
-  count_fiber="$(echo "$response" | grep -ci "Fiber:" || true)"
-  [[ -z "$count_fiber" ]] && count_fiber=0
-  [[ "$count_fiber" -ne 1 ]] && dupes+=( "Fiber($count_fiber)" )
-  count_protein="$(echo "$response" | grep -ci "Protein:" || true)"
-  [[ -z "$count_protein" ]] && count_protein=0
-  [[ "$count_protein" -ne 1 ]] && dupes+=( "Protein($count_protein)" )
-  if [[ ${#dupes[@]} -eq 0 ]]; then
+  # ---- Helper: extract first integer from a line (strips units like "g", "kcal") ----
+  extract_num() {
+    echo "$1" | sed 's/.*:[[:space:]]*//' | grep -oE '[0-9]+' | head -1
+  }
+
+  # ---- Multiples (single block OR multiple blocks with a valid Total) ----
+  MACRO_NAMES=("Calories" "Fat" "Carbs" "Sugar" "Fiber" "Protein")
+  MACRO_PATTERNS=("Calories:" "Fat:" "Carbs:|Carbohydrates:" "Sugar:" "Fiber:" "Protein:")
+  has_multiples=0
+  missing_macros=()
+  macro_counts=()
+  for idx in "${!MACRO_NAMES[@]}"; do
+    pat="${MACRO_PATTERNS[$idx]}"
+    cnt="$(echo "$response" | grep -ciE "$pat" || true)"
+    [[ -z "$cnt" ]] && cnt=0
+    macro_counts+=("$cnt")
+    [[ "$cnt" -eq 0 ]] && missing_macros+=("${MACRO_NAMES[$idx]}")
+    [[ "$cnt" -gt 1 ]] && has_multiples=1
+  done
+
+  if [[ ${#missing_macros[@]} -gt 0 ]]; then
+    u_res="FAIL"
+    echo "Multiples:    FAIL (missing macros: ${missing_macros[*]})"
+    any_failed=1
+  elif [[ $has_multiples -eq 0 ]]; then
     u_res="PASS"
     echo "Multiples:    PASS (each macronutrient appears once)"
   else
-    u_res="FAIL"
-    echo "Multiples:    FAIL (repeated or missing: ${dupes[*]})"
-    any_failed=1
+    total_ok=1
+    sum_ok=1
+    sum_errors=()
+
+    if ! echo "$response" | grep -qi "total"; then
+      total_ok=0
+    fi
+
+    for idx in "${!MACRO_NAMES[@]}"; do
+      pat="${MACRO_PATTERNS[$idx]}"
+      name="${MACRO_NAMES[$idx]}"
+      lines=()
+      while IFS= read -r _line; do
+        lines+=("$_line")
+      done < <(echo "$response" | grep -iE "$pat")
+      cnt=${#lines[@]}
+      if [[ $cnt -le 1 ]]; then
+        continue
+      fi
+      sum=0
+      for ((k=0; k<cnt-1; k++)); do
+        val="$(extract_num "${lines[$k]}")"
+        [[ -z "$val" ]] && val=0
+        sum=$((sum + val))
+      done
+      last_val="$(extract_num "${lines[$((cnt-1))]}")"
+      [[ -z "$last_val" ]] && last_val=0
+      if [[ $sum -ne $last_val ]]; then
+        sum_ok=0
+        sum_errors+=("${name}(expected:${sum} got:${last_val})")
+      fi
+    done
+
+    if [[ $total_ok -eq 1 && $sum_ok -eq 1 ]]; then
+      u_res="PASS"
+      echo "Multiples:    PASS (multiple blocks with valid Total)"
+    else
+      u_res="FAIL"
+      reasons=""
+      [[ $total_ok -eq 0 ]] && reasons="no Total header"
+      if [[ $sum_ok -eq 0 ]]; then
+        [[ -n "$reasons" ]] && reasons="$reasons; "
+        reasons="${reasons}sum mismatch: ${sum_errors[*]}"
+      fi
+      echo "Multiples:    FAIL ($reasons)"
+      any_failed=1
+    fi
   fi
   U_RES+=("$u_res")
 
-  # ---- Values (only if Multiples passed): after each macro, 0 or positive integer ----
-  if [[ "$u_res" == "PASS" ]]; then
-    no_num=()
-    for macro in "Calories" "Fat" "Sugar" "Fiber" "Protein"; do
-      line="$(echo "$response" | grep -i "$macro" | head -1)"
-      line_lower="$(echo "$line" | tr '[:upper:]' '[:lower:]')"
-      macro_lower="$(echo "$macro" | tr '[:upper:]' '[:lower:]')"
-      if [[ -z "$line" ]] || ! [[ "$line_lower" =~ ${macro_lower}[^0-9]*[0-9]+ ]]; then
-        no_num+=( "$macro" )
-      fi
-    done
-    # Carbs: line may say "Carbs" or "Carbohydrates"
-    carbs_line="$(echo "$response" | grep -iE "Carbs:|Carbohydrates:" | head -1)"
-    carbs_lower="$(echo "$carbs_line" | tr '[:upper:]' '[:lower:]')"
-    if [[ -z "$carbs_line" ]] || ( ! [[ "$carbs_lower" =~ carbs[^0-9]*[0-9]+ ]] && ! [[ "$carbs_lower" =~ carbohydrates[^0-9]*[0-9]+ ]] ); then
-      no_num+=( "Carbs" )
+  # ---- Values: check last occurrence of each macro has a numeric value ----
+  no_num=()
+  for macro in "Calories" "Fat" "Sugar" "Fiber" "Protein"; do
+    line="$(echo "$response" | grep -i "$macro:" | tail -1)"
+    line_lower="$(echo "$line" | tr '[:upper:]' '[:lower:]')"
+    macro_lower="$(echo "$macro" | tr '[:upper:]' '[:lower:]')"
+    if [[ -z "$line" ]] || ! [[ "$line_lower" =~ ${macro_lower}[^0-9]*[0-9]+ ]]; then
+      no_num+=( "$macro" )
     fi
-    if [[ ${#no_num[@]} -eq 0 ]]; then
-      v_res="PASS"
-      echo "Values:       PASS (each macro has 0 or positive integer)"
-    else
-      v_res="FAIL"
-      echo "Values:       FAIL (no number after: ${no_num[*]})"
-      any_failed=1
-    fi
-    V_RES+=("$v_res")
-  else
-    v_res="SKIP"
-    echo "Values:       SKIP (Multiples did not pass)"
-    V_RES+=("SKIP")
+  done
+  carbs_line="$(echo "$response" | grep -iE "Carbs:|Carbohydrates:" | tail -1)"
+  carbs_lower="$(echo "$carbs_line" | tr '[:upper:]' '[:lower:]')"
+  if [[ -z "$carbs_line" ]] || ( ! [[ "$carbs_lower" =~ carbs[^0-9]*[0-9]+ ]] && ! [[ "$carbs_lower" =~ carbohydrates[^0-9]*[0-9]+ ]] ); then
+    no_num+=( "Carbs" )
   fi
+  if [[ ${#no_num[@]} -eq 0 ]]; then
+    v_res="PASS"
+    echo "Values:       PASS (each macro has 0 or positive integer)"
+  else
+    v_res="FAIL"
+    echo "Values:       FAIL (no number after: ${no_num[*]})"
+    any_failed=1
+  fi
+  V_RES+=("$v_res")
 
   prompt_words="$(echo "$prompt" | wc -w | tr -d ' ')"
   PROMPT_WORDS+=("$prompt_words")

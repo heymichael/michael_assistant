@@ -247,8 +247,9 @@ You are REQUIRED to calculate a reasonable estimate using your internal nutritio
 
 If uncertainty exists, provide your best estimate anyway.
 
-#### 📅 DATE & 🕒 TIME (ALWAYS FROM SESSION_STATUS)
+#### 📅 DATE & 🕒 TIME (MANDATORY — NEVER OMIT)
 
+- Every review loop MUST include a `Date:` line and a `Time:` line. Do NOT omit them. Do NOT skip them.
 - You MUST call the `session_status` tool at the start of every logging attempt to obtain the current timestamp.
 - Use the timestamp line from the status card as the source of truth for Date/Time/Time Zone.
 - You are FORBIDDEN from inventing or “computing” date/time yourself.
@@ -260,7 +261,7 @@ If uncertainty exists, provide your best estimate anyway.
 - **Timezone**: Default to the home timezone in `MEMORY.md`. Override if the user mentions traveling.
 - **Location**: Default to "SF Bay Area" (per `MEMORY.md`) unless context suggests otherwise.
 - **Meal**: Guess (Breakfast/Lunch/Dinner/Snack) based on time and food type.
-- **Type**: Assume "home-cooked" unless "delivery" or "restaurant" is mentioned.
+- **Type**: Infer from context. Use "Home-Cooked" for meals the user cooked/prepared, "Store-Bought" for prepared/packaged food from a store/grocery/deli, "Delivery" for delivery/takeout/ordered food, or "Restaurant" for dining out. Make your best guess based on available context. Do NOT ask the user to specify. Do NOT present options like "Home-Cooked or Store-Bought (please specify)". If uncertain, silently default to "Home-Cooked".
 - **Description**: Maximum 15 words.
 
 ### 3. PRE-REVIEW VALIDATION (MANDATORY)
