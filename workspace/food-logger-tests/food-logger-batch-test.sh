@@ -9,11 +9,13 @@
 #   Values:     Last occurrence of each macro has a 0 or positive integer
 #
 # Usage: ./food-logger-batch-test.sh
+# Override sample size: PROMPT_SAMPLE_SIZE=25 ./food-logger-batch-test.sh
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROMPTS_FILE="${SCRIPT_DIR}/food-logger-test-prompts.txt"
 TARGET=6822603184
+PROMPT_SAMPLE_SIZE="${PROMPT_SAMPLE_SIZE:-10}"
 
 REQUIRED_WORDS=(Calories Fat Sugar Fiber Protein)
 CARBS_PATTERN="Carbohydrates|Carbs"
@@ -25,6 +27,37 @@ if [[ ! -f "$PROMPTS_FILE" ]]; then
   echo "Prompts file not found: $PROMPTS_FILE"
   exit 1
 fi
+
+if ! [[ "$PROMPT_SAMPLE_SIZE" =~ ^[0-9]+$ ]] || [[ "$PROMPT_SAMPLE_SIZE" -lt 1 ]]; then
+  echo "PROMPT_SAMPLE_SIZE must be a positive integer. Got: $PROMPT_SAMPLE_SIZE"
+  exit 1
+fi
+
+total_prompts="$(awk 'NF { count++ } END { print count+0 }' "$PROMPTS_FILE")"
+if [[ "$total_prompts" -eq 0 ]]; then
+  echo "No non-empty prompts found in: $PROMPTS_FILE"
+  exit 1
+fi
+
+sample_size="$PROMPT_SAMPLE_SIZE"
+if (( sample_size > total_prompts )); then
+  echo "Requested $sample_size prompts, but only $total_prompts available. Sampling all prompts."
+  sample_size="$total_prompts"
+fi
+
+SAMPLED_PROMPTS_FILE="$(mktemp)"
+cleanup() {
+  rm -f "$SAMPLED_PROMPTS_FILE"
+}
+trap cleanup EXIT
+
+awk 'BEGIN { srand() } NF { print rand() "\t" $0 }' "$PROMPTS_FILE" \
+  | sort -k1,1n \
+  | head -n "$sample_size" \
+  | cut -f2- > "$SAMPLED_PROMPTS_FILE"
+
+echo "Sampling $sample_size prompt(s) randomly from $total_prompts total prompts."
+echo ""
 
 # Arrays for summary table and failure report
 declare -a PROMPTS PROMPT_WORDS N_RES M_RES T_RES U_RES V_RES TYPE_VALUES
@@ -208,7 +241,7 @@ while IFS= read -r prompt || [[ -n "$prompt" ]]; do
   PROMPT_WORDS+=("$prompt_words")
   PROMPTS+=("$prompt")
   echo ""
-done < "$PROMPTS_FILE"
+done < "$SAMPLED_PROMPTS_FILE"
 
 # ---- Summary table ----
 echo "========== SUMMARY =========="
