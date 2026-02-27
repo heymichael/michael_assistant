@@ -1,0 +1,17 @@
+suite_id: "food_logger_multi_turn_v1"
+defaults:
+  target: "6822603184"
+  timeout_seconds: 120
+  poll_attempts: 10
+  poll_interval_seconds: 2
+  hard_fail_on_first_error: false
+  semantic_mode: "off" # off | advisory | required
+
+scenarios:
+  - "scenarios/simple_input_save.yaml"
+  - "scenarios/vague_shakshuka_edit_save.yaml"
+  - "scenarios/edit_then_decline_save.yaml"
+  - "scenarios/vague_burrito_bowl_decline_save.yaml"
+  - "scenarios/vague_pasta_edit_decline_save.yaml"
+  - "scenarios/vague_takeout_single_turn.yaml"
+  - "scenarios/vague_quick_breakfast_single_turn.yaml"

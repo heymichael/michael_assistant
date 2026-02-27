@@ -1,0 +1,73 @@
+id: "vague_shakshuka_edit_save"
+description: "Vague dish should include assumptions, then apply edits, then save."
+enabled: true
+tags: ["vague", "assumptions", "edit", "save", "multi-turn"]
+
+config:
+  timeout_seconds: 120
+  poll_attempts: 12
+  poll_interval_seconds: 2
+
+preconditions:
+  expect_sheet_access: true
+  require_clean_gateway: false
+
+expectations:
+  require_review_fields_each_turn: true
+  require_numeric_macros_each_turn: true
+  require_confirmation_gate: true
+  forbid_logged_before_save: true
+  expect_sheet_append_on_save: true
+  expected_append_count: 1
+
+semantic_checks:
+  - name: "Assumption clarity"
+    criteria: "Assistant clearly states assumptions when dish details are ambiguous."
+    threshold: 0.70
+  - name: "Edit fidelity"
+    criteria: "Assistant applies user-requested macro edits correctly before save."
+    threshold: 0.80
+
+turns:
+  - role: "user"
+    message: "shakshuka with two eggs and a slice of bread"
+    checks:
+      must_contain:
+        - "Date:"
+        - "Time:"
+        - "Meal:"
+        - "Type:"
+        - "Description:"
+        - "Calories:"
+        - "Fat:"
+        - "Carbs:"
+        - "Sugar:"
+        - "Fiber:"
+        - "Protein:"
+      field_is_numeric: ["Calories", "Fat", "Carbs", "Sugar", "Fiber", "Protein"]
+      must_match_regex:
+        - "(assum|typical|includes|estimated)"
+        - "(Would you like to modify anything\\?|Would you like to (?:log|save) this(?: [^?]+)?\\?|Should I save this to your Food Log\\?)"
+      must_not_contain:
+        - "Logged"
+        - "[Estimate]"
+        - "N/A"
+        - "Unknown"
+
+  - role: "user"
+    message: "change fat to 12 and carbs to 24"
+    checks:
+      field_equals:
+        - field: "Fat"
+          value: "12"
+        - field: "Carbs"
+          value: "24"
+      field_is_numeric: ["Calories", "Fat", "Carbs", "Sugar", "Fiber", "Protein"]
+      must_not_contain:
+        - "Logged"
+
+  - role: "user"
+    message: "save"
+    checks:
+      must_match_regex:
+        - "\\b(logged|saved|appended|added)\\b"

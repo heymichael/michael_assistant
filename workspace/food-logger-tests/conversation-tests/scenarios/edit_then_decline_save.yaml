@@ -1,0 +1,62 @@
+id: "edit_then_decline_save"
+description: "Assistant applies edits but does not log when user declines save."
+enabled: true
+tags: ["edit", "decline-save", "multi-turn", "safety"]
+
+config:
+  timeout_seconds: 120
+  poll_attempts: 10
+  poll_interval_seconds: 2
+
+preconditions:
+  expect_sheet_access: true
+  require_clean_gateway: false
+
+expectations:
+  require_review_fields_each_turn: true
+  require_numeric_macros_each_turn: true
+  require_confirmation_gate: true
+  forbid_logged_before_save: true
+  expect_sheet_append_on_save: false
+  expected_append_count: 0
+
+turns:
+  - role: "user"
+    message: "turkey sandwich, chips, and an iced tea"
+    checks:
+      must_contain:
+        - "Date:"
+        - "Time:"
+        - "Meal:"
+        - "Type:"
+        - "Description:"
+        - "Calories:"
+        - "Fat:"
+        - "Carbs:"
+        - "Sugar:"
+        - "Fiber:"
+        - "Protein:"
+      field_is_numeric: ["Calories", "Fat", "Carbs", "Sugar", "Fiber", "Protein"]
+      must_match_regex:
+        - "(Would you like to modify anything\\?|Would you like to (?:log|save) this(?: [^?]+)?\\?|Should I save this to your Food Log\\?)"
+      must_not_contain:
+        - "Logged"
+
+  - role: "user"
+    message: "change calories to 620 and protein to 28"
+    checks:
+      field_equals:
+        - field: "Calories"
+          value: "620"
+        - field: "Protein"
+          value: "28"
+      must_not_contain:
+        - "Logged"
+
+  - role: "user"
+    message: "no, don't save this"
+    checks:
+      must_not_match_regex:
+        - "(Logged|saved|appended|added).*(log|sheet)|^Logged\\b"
+      must_match_regex:
+        - "(modify|change|save|not save|won't save|okay)"

@@ -1,0 +1,37 @@
+{
+  "scenario_id": "vague_shakshuka_edit_save",
+  "session_id": "foodlog-conv-vague-shakshuka-edit-save-1772159559-2722",
+  "passed": true,
+  "errors": [],
+  "turn_count": 3,
+  "duration_seconds": 66.725,
+  "transcript": [
+    {
+      "turn_index": 1,
+      "role": "user",
+      "message": "shakshuka with two eggs and a slice of bread",
+      "is_save_turn": false,
+      "response": "### Estimated Macronutrients for Shakshuka with Two Eggs and a Slice of Bread (again)\n\n#### Shakshuka (with two eggs)\nTypically includes tomatoes, bell peppers, onions, spices, and two eggs.\n\n- **Calories:** 300 (approx.)\n- **Fat:** 18g\n- **Carbs:** 20g\n- **Sugar:** 8g\n- **Fiber:** 4g\n- **Protein:** 16g\n\n#### Slice of Bread\nAssuming a standard slice of whole grain bread:\n\n- **Calories:** 80\n- **Fat:** 1g\n- **Carbs:** 15g\n- **Sugar:** 1g\n- **Fiber:** 2g\n- **Protein:** 4g\n\n### Combined Total\n- **Calories:** 380\n- **Fat:** 19g\n- **Carbs:** 35g\n- **Sugar:** 9g\n- **Fiber:** 6g\n- **Protein:** 20g\n\n### Metadata\n- **Date:** 2026-02-26\n- **Time:** 18:32\n- **Meal:** Dinner\n- **Type:** Home-Cooked\n- **Description:** Shakshuka with two eggs and a slice of bread\n- **Timezone:** America/Los_Angeles\n- **Rounds:** 1\n\nWould you like to log this entry?\n",
+      "check_errors": [],
+      "passed": true
+    },
+    {
+      "turn_index": 2,
+      "role": "user",
+      "message": "change fat to 12 and carbs to 24",
+      "is_save_turn": false,
+      "response": "### Updated Macronutrients for Shakshuka with Two Eggs and a Slice of Bread\n\n#### Updated Breakdown:\n- **Calories:** 380\n- **Fat:** 12g  *(updated)*\n- **Carbs:** 24g  *(updated)*\n- **Sugar:** 9g\n- **Fiber:** 6g\n- **Protein:** 20g\n\n### Metadata\n- **Date:** 2026-02-26\n- **Time:** 18:33\n- **Meal:** Dinner\n- **Type:** Home-Cooked\n- **Description:** Shakshuka with two eggs and a slice of bread\n- **Timezone:** America/Los_Angeles\n- **Rounds:** 1\n\nWould you like to log this updated entry?\n",
+      "check_errors": [],
+      "passed": true
+    },
+    {
+      "turn_index": 3,
+      "role": "user",
+      "message": "save",
+      "is_save_turn": true,
+      "response": "The updated entry for **Shakshuka with two eggs and a slice of bread** has been successfully logged. If there's anything else you need or want to log, just let me know!\n",
+      "check_errors": [],
+      "passed": true
+    }
+  ]
+}
