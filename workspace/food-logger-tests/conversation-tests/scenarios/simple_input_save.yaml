@@ -1,0 +1,52 @@
+id: "simple_input_save"
+description: "Happy-path two-turn flow: propose entry, then save."
+enabled: true
+tags: ["happy-path", "save", "multi-turn"]
+
+config:
+  timeout_seconds: 120
+  poll_attempts: 10
+  poll_interval_seconds: 2
+
+preconditions:
+  expect_sheet_access: true
+  require_clean_gateway: false
+
+expectations:
+  require_review_fields_each_turn: true
+  require_numeric_macros_each_turn: true
+  require_confirmation_gate: true
+  forbid_logged_before_save: true
+  expect_sheet_append_on_save: true
+  expected_append_count: 1
+
+turns:
+  - role: "user"
+    message: "2 whole eggs and one slice of toast with butter"
+    checks:
+      must_contain:
+        - "Date:"
+        - "Time:"
+        - "Meal:"
+        - "Type:"
+        - "Description:"
+        - "Calories:"
+        - "Fat:"
+        - "Carbs:"
+        - "Sugar:"
+        - "Fiber:"
+        - "Protein:"
+      field_is_numeric: ["Calories", "Fat", "Carbs", "Sugar", "Fiber", "Protein"]
+      must_match_regex:
+        - "(Would you like to modify anything\\?|Would you like to (?:log|save) this(?: [^?]+)?\\?|Should I save this to your Food Log\\?)"
+      must_not_contain:
+        - "Logged"
+        - "[Estimate]"
+        - "N/A"
+        - "Unknown"
+
+  - role: "user"
+    message: "save"
+    checks:
+      must_match_regex:
+        - "\\b(logged|saved|appended|added)\\b"

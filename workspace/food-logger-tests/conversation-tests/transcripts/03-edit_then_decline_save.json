@@ -1,0 +1,74 @@
+{
+  "scenario_id": "edit_then_decline_save",
+  "session_id": "foodlog-conv-edit-then-decline-save-1772159625-3791",
+  "passed": false,
+  "errors": [
+    "Turn 3: require_review_fields_each_turn failed: \"Date\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Time\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Meal\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Type\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Description\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Calories\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Fat\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Carbs\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Sugar\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Fiber\" missing",
+    "Turn 3: require_review_fields_each_turn failed: \"Protein\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Calories\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Fat\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Carbs\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Sugar\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Fiber\" missing",
+    "Turn 3: require_numeric_macros_each_turn failed: \"Protein\" missing",
+    "Turn 3: forbid_logged_before_save failed (found logged/saved signal)."
+  ],
+  "turn_count": 3,
+  "duration_seconds": 43.27,
+  "transcript": [
+    {
+      "turn_index": 1,
+      "role": "user",
+      "message": "turkey sandwich, chips, and an iced tea",
+      "is_save_turn": false,
+      "response": "### Estimated Macronutrients for Turkey Sandwich, Chips, and Iced Tea\n\n#### Turkey Sandwich (standard size)\n- **Calories:** 300 (approx.)\n- **Fat:** 10g\n- **Carbs:** 30g\n- **Sugar:** 4g\n- **Fiber:** 3g\n- **Protein:** 25g\n\n#### Chips (1 oz., approx. 15 chips)\n- **Calories:** 150\n- **Fat:** 10g\n- **Carbs:** 15g\n- **Sugar:** 1g\n- **Fiber:** 1g\n- **Protein:** 2g\n\n#### Iced Tea (unsweetened, 12 oz.)\n- **Calories:** 0 (approx.)\n- **Fat:** 0g\n- **Carbs:** 0g\n- **Sugar:** 0g\n- **Fiber:** 0g\n- **Protein:** 0g\n\n### Combined Total\n- **Calories:** 450\n- **Fat:** 20g\n- **Carbs:** 45g\n- **Sugar:** 5g\n- **Fiber:** 4g\n- **Protein:** 27g\n\n### Metadata\n- **Date:** 2026-02-26\n- **Time:** 18:33\n- **Meal:** Lunch\n- **Type:** Store-Bought\n- **Description:** Turkey sandwich, chips, and iced tea\n- **Timezone:** America/Los_Angeles\n- **Rounds:** 1\n\nWould you like to log this entry?\n",
+      "check_errors": [],
+      "passed": true
+    },
+    {
+      "turn_index": 2,
+      "role": "user",
+      "message": "change calories to 620 and protein to 28",
+      "is_save_turn": false,
+      "response": "### Updated Macronutrients for Turkey Sandwich, Chips, and Iced Tea\n\n#### Updated Breakdown:\n- **Calories:** 620  *(updated)*\n- **Fat:** 20g\n- **Carbs:** 45g\n- **Sugar:** 5g\n- **Fiber:** 4g\n- **Protein:** 28g  *(updated)*\n\n### Metadata\n- **Date:** 2026-02-26\n- **Time:** 18:34\n- **Meal:** Lunch\n- **Type:** Store-Bought\n- **Description:** Turkey sandwich, chips, and iced tea\n- **Timezone:** America/Los_Angeles\n- **Rounds:** 1\n\nWould you like to log this updated entry?\n",
+      "check_errors": [],
+      "passed": true
+    },
+    {
+      "turn_index": 3,
+      "role": "user",
+      "message": "no, don't save this",
+      "is_save_turn": false,
+      "response": "Got it! The entry for the turkey sandwich, chips, and iced tea will not be saved. If you need anything else, just let me know!\n",
+      "check_errors": [
+        "require_review_fields_each_turn failed: \"Date\" missing",
+        "require_review_fields_each_turn failed: \"Time\" missing",
+        "require_review_fields_each_turn failed: \"Meal\" missing",
+        "require_review_fields_each_turn failed: \"Type\" missing",
+        "require_review_fields_each_turn failed: \"Description\" missing",
+        "require_review_fields_each_turn failed: \"Calories\" missing",
+        "require_review_fields_each_turn failed: \"Fat\" missing",
+        "require_review_fields_each_turn failed: \"Carbs\" missing",
+        "require_review_fields_each_turn failed: \"Sugar\" missing",
+        "require_review_fields_each_turn failed: \"Fiber\" missing",
+        "require_review_fields_each_turn failed: \"Protein\" missing",
+        "require_numeric_macros_each_turn failed: \"Calories\" missing",
+        "require_numeric_macros_each_turn failed: \"Fat\" missing",
+        "require_numeric_macros_each_turn failed: \"Carbs\" missing",
+        "require_numeric_macros_each_turn failed: \"Sugar\" missing",
+        "require_numeric_macros_each_turn failed: \"Fiber\" missing",
+        "require_numeric_macros_each_turn failed: \"Protein\" missing"
+      ],
+      "passed": false
+    }
+  ]
+}

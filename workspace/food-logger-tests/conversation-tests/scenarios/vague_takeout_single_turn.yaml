@@ -1,0 +1,44 @@
+id: "vague_takeout_single_turn"
+description: "Single-turn vague takeout prompt should produce assumption-rich, complete structured review."
+enabled: true
+tags: ["vague", "assumptions", "single-turn"]
+
+config:
+  timeout_seconds: 120
+  poll_attempts: 6
+  poll_interval_seconds: 2
+
+preconditions:
+  expect_sheet_access: false
+  require_clean_gateway: false
+
+expectations:
+  require_review_fields_each_turn: true
+  require_numeric_macros_each_turn: true
+  require_confirmation_gate: true
+  forbid_logged_before_save: true
+  expect_sheet_append_on_save: false
+  expected_append_count: 0
+
+turns:
+  - role: "user"
+    message: "some chinese takeout"
+    checks:
+      must_contain:
+        - "Date:"
+        - "Time:"
+        - "Meal:"
+        - "Type:"
+        - "Description:"
+        - "Calories:"
+        - "Fat:"
+        - "Carbs:"
+        - "Sugar:"
+        - "Fiber:"
+        - "Protein:"
+      field_is_numeric: ["Calories", "Fat", "Carbs", "Sugar", "Fiber", "Protein"]
+      must_match_regex:
+        - "(assum|assuming|typical|usually|standard|includes|estimated)"
+        - "(Would you like to modify anything\\?|Would you like to (?:log|save) this(?: [^?]+)?\\?|Should I save this to your Food Log\\?)"
+      must_not_match_regex:
+        - "\\b(logged|appended|added)\\b"

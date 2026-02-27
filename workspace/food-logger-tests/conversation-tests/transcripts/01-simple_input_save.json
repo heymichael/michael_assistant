@@ -1,0 +1,28 @@
+{
+  "scenario_id": "simple_input_save",
+  "session_id": "foodlog-conv-simple-input-save-1772159494-6994",
+  "passed": true,
+  "errors": [],
+  "turn_count": 2,
+  "duration_seconds": 64.492,
+  "transcript": [
+    {
+      "turn_index": 1,
+      "role": "user",
+      "message": "2 whole eggs and one slice of toast with butter",
+      "is_save_turn": false,
+      "response": "### Estimated Macronutrients for 2 Whole Eggs and One Slice of Toast with Butter\n\n#### Breakdown:\n- **Two Whole Eggs**\n  - **Calories:** 143\n  - **Fat:** 9.5g\n  - **Carbs:** 1.1g\n  - **Sugar:** 0.6g\n  - **Fiber:** 0g\n  - **Protein:** 12.6g\n\n- **One Slice of Toast**\n  - **Calories:** 80\n  - **Fat:** 1g\n  - **Carbs:** 15g\n  - **Sugar:** 1g\n  - **Fiber:** 1g\n  - **Protein:** 3g \n\n- **Butter (1 teaspoon)**\n  - **Calories:** 34\n  - **Fat:** 3.8g\n  - **Carbs:** 0g\n  - **Sugar:** 0g\n  - **Fiber:** 0g\n  - **Protein:** 0g\n\n### Combined Total\n- **Calories:** 257\n- **Fat:** 14.3g\n- **Carbs:** 16.1g\n- **Sugar:** 1.6g\n- **Fiber:** 1g\n- **Protein:** 15.6g\n\n### Metadata\n- **Date:** 2026-02-26\n- **Time:** 18:31\n- **Meal:** Dinner\n- **Type:** Home-Cooked\n- **Description:** 2 whole eggs and one slice of toast with butter\n- **Timezone:** America/Los_Angeles\n- **Rounds:** 1\n\nWould you like to log this entry?\n",
+      "check_errors": [],
+      "passed": true
+    },
+    {
+      "turn_index": 2,
+      "role": "user",
+      "message": "save",
+      "is_save_turn": true,
+      "response": "The entry for **2 whole eggs and one slice of toast with butter** has been successfully logged. If there's anything else you need or want to log, just let me know!\n",
+      "check_errors": [],
+      "passed": true
+    }
+  ]
+}
